@@ -58,6 +58,10 @@ This is where we create the instructions to define the architecture of the hardw
 ````
 
 ## Inventory
+By default, Ansible represents what machines it manages using a very simple INI file that puts all of your managed machines in groups of your own choosing.  
+
+To add new machines, there is no additional SSL signing server involved, so there's never any hassle deciding why a particular machine didn’t get linked up due to obscure NTP or DNS issues.
+
 So this is where we maintain the structure of our network environment. Here for example we have two nodes.
 ````
 [webservers]
@@ -71,3 +75,25 @@ db1.machine
 ````
 Under the webserver node we actually have the name of specific machines within that environment, so when we write our script we just have to refer to either webserver or databaseserver. So we
 can just add the specific machine or ip address to the inventory list and then be able to just use the same playbook with the node specified.
+
+Once inventory hosts are listed, variables can be assigned to them in simple text files (in a subdirectory called 'group_vars/' or 'host_vars/') or directly in the inventory file.
+
+## Modules
+Modules in ansible are the basis for constructing playbooks, and modules are categorised into
+separate functions with specific keywords, for example there are modules which can handle cloud services to
+window services and everything in between. This link leads to the documentation with an index of all the modules:
+https://docs.ansible.com/ansible/latest/modules/modules_by_category.html
+Each module also has parameters that must be used with the keyword of said module, here is a simple example,
+imagine we want to use the 'File module', we can check which key words can execute commands associated with
+the file module in the documentation. In this example lets use the keyword 'iso_extract' which has the
+required parameters 'dest, files, image'. so the example playbook task with this module would be:
+````
+- name: Extract kernel and ramdisk from a LiveCD
+  iso_extract:
+    image: /tmp/rear-test.iso
+    dest: /tmp/virt-rear/
+    files:
+    - isolinux/kernel
+    - isolinux/initrd.cgz
+
+````
